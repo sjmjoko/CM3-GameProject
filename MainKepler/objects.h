@@ -34,6 +34,9 @@ struct Bullet
 	int ID;
 	int x;
 	int y;
+	int xx;
+	int yy;
+	int degree;
 	bool live;
 	int speed;
 
