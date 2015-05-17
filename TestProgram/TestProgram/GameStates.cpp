@@ -61,11 +61,13 @@ int GameStates::gameInit()
 	mgImage = al_load_bitmap("starMG.png");
 	fgImage = al_load_bitmap("starFG.png");
 	playImage = al_load_bitmap("galaxy-wallpapers-hd-wallpaper-space-photo-galaxy-wallpaper.jpg");
+	shipImage = al_load_bitmap("spacecraft_2_T.png");
 
 	initBackground(BG, 0, 0, 1, 0, WIDTH, HEIGHT, -1, 1, bgImage);
 	initBackground(MG, 0, 0, 3, 0, WIDTH * 2, HEIGHT, -1, 1, mgImage);
 	initBackground(FG, 0, 0, 5, 0, WIDTH, HEIGHT, -1, 1, fgImage);
 	initBackground(PBG, 0, 0, 10, 0, WIDTH * 2, HEIGHT * 2, -1, 1, playImage);
+	initBackground(SSG, 0, getHEIGHT()/8, 10, 0, WIDTH, HEIGHT * 2, -1, 1, shipImage);
 
 	al_reserve_samples(10);
 
@@ -87,6 +89,7 @@ int GameStates::gameInit()
 	font18 = al_load_font("orbitron-black.ttf", 18, 0);
 	lives = al_load_font("arial.ttf", 18, 0);
 	menuFont = al_load_font("Navia.ttf", 150, 0);
+	thanks = al_load_font("arial.ttf", 10, 0);
 
 	//==============================================
 	//TIMER INIT AND STARTUP
@@ -127,7 +130,9 @@ void GameStates::destroy()
 	al_destroy_bitmap(bgImage);
 	al_destroy_bitmap(mgImage);
 	al_destroy_bitmap(fgImage);
+	al_destroy_bitmap(shipImage);
 	al_destroy_font(font18);
+	al_destroy_font(thanks);
 	al_destroy_font(lives);
 	al_destroy_font(menuFont);
 	al_destroy_timer(timer);

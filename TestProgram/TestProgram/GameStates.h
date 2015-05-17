@@ -53,6 +53,7 @@ public:
 	Background MG;
 	Background FG;
 	Background PBG;
+	Background SSG;
 
 	float gameTime = 0;
 	int frames = 0;
@@ -65,6 +66,7 @@ public:
 	ALLEGRO_TIMER *timer;
 	ALLEGRO_FONT *font18;
 	ALLEGRO_FONT *lives;
+	ALLEGRO_FONT *thanks;
 	ALLEGRO_FONT *menuFont;
 	ALLEGRO_SAMPLE *sample3 = NULL;
 	ALLEGRO_SAMPLE *sampleEnd = NULL;
@@ -74,6 +76,7 @@ public:
 	ALLEGRO_BITMAP* mgImage = NULL;
 	ALLEGRO_BITMAP* fgImage = NULL;
 	ALLEGRO_BITMAP* playImage = NULL;
+	ALLEGRO_BITMAP* shipImage = NULL;
 
 
 };

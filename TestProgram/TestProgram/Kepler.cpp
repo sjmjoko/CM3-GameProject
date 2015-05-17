@@ -135,14 +135,17 @@ int main()
 				Kepler.drawBackground(Kepler.BG);
 				Kepler.drawBackground(Kepler.MG);
 				Kepler.drawBackground(Kepler.FG);
+				Kepler.drawBackground(Kepler.SSG);
 
 				al_stop_sample_instance(Kepler.instanceEnd);
-				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), 0, Kepler.getHEIGHT() - 100, ALLEGRO_ALIGN_LEFT, "CONTROLS");
-				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 150), 0, Kepler.getHEIGHT() - 70, ALLEGRO_ALIGN_LEFT, "Arrow Keys : Steer/Thrust");
-				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 150), 0, Kepler.getHEIGHT() - 40, ALLEGRO_ALIGN_LEFT, "Space           :  Shoot");
+				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), 0, Kepler.getHEIGHT() - 110, ALLEGRO_ALIGN_LEFT, "CONTROLS");
+				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 150), 0, Kepler.getHEIGHT() - 80, ALLEGRO_ALIGN_LEFT, "Arrow Keys : Steer");
+				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 150), 0, Kepler.getHEIGHT() - 50, ALLEGRO_ALIGN_LEFT, "S           :  Shoot");
+				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 150), 0, Kepler.getHEIGHT() - 20, ALLEGRO_ALIGN_LEFT, "A           : Accelerate");
 				al_draw_text(Kepler.menuFont, al_map_rgb(100, 255, 150), Kepler.getWIDTH() / 2, Kepler.getHEIGHT() / 3, ALLEGRO_ALIGN_CENTRE, "Kepler");
 				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), Kepler.getWIDTH() / 2, (Kepler.getHEIGHT() / 2) + 40, ALLEGRO_ALIGN_CENTRE, "Press Space to Play");
 				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), Kepler.getWIDTH() / 2, (Kepler.getHEIGHT() / 2) + 70, ALLEGRO_ALIGN_CENTRE, "Press Escape to End");
+				al_draw_text(Kepler.font18, al_map_rgb(255, 50, 5), Kepler.getWIDTH() - 10, Kepler.getHEIGHT() - 20, ALLEGRO_ALIGN_RIGHT, "TEAM DOPE!");
 
 				al_play_sample_instance(Kepler.instance3);
 			}
@@ -165,6 +168,13 @@ int main()
 				al_draw_text(Kepler.font18, al_map_rgb(255, 0, 0), 0, 30, ALLEGRO_ALIGN_LEFT, "Are you sure you want to quit?");
 				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), Kepler.getWIDTH() / 2, Kepler.getHEIGHT() / 2, ALLEGRO_ALIGN_CENTRE, "Press Space to Exit the Game");
 				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), Kepler.getWIDTH() / 2, (Kepler.getHEIGHT() / 2) + 30, ALLEGRO_ALIGN_CENTRE, "Press ENTER to go to MENU");
+				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 255), 0, Kepler.getHEIGHT() - 100, ALLEGRO_ALIGN_LEFT, "Thank you for playing Kepler");
+				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 150), 0, Kepler.getHEIGHT() - 90, ALLEGRO_ALIGN_LEFT, "Created by:");
+				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 255), 0, Kepler.getHEIGHT() - 80, ALLEGRO_ALIGN_LEFT, "Sesethu Mhlana");
+				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 255), 0, Kepler.getHEIGHT() - 70, ALLEGRO_ALIGN_LEFT, "Matsobane Makhura");
+				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 255), 0, Kepler.getHEIGHT() - 60, ALLEGRO_ALIGN_LEFT, "Sithembile Dubazane");
+				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 255), 0, Kepler.getHEIGHT() - 50, ALLEGRO_ALIGN_LEFT, "Mafu Mxenge");
+				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 255), 0, Kepler.getHEIGHT() - 40, ALLEGRO_ALIGN_LEFT, "Sithembiso Mjoko");
 			}
 
 			//FLIP BUFFERS========================
