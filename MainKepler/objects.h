@@ -44,7 +44,7 @@ struct Bullet
 
 };
 
-struct Comet
+struct Enemy
 {
 	int ID;
 	int x;
@@ -54,8 +54,39 @@ struct Comet
 	int boundx;
 	int boundy;
 
-	ALLEGRO_BITMAP *image;
+	int maxframe;
+	int curframe;
+	int frameCount;
+	int frameDelay;
+	int frameWidth;
+	int frameHeight;
+	int animationColumns;
+	int animationDirection;
 
+	int animationRow;
+
+	ALLEGRO_BITMAP *image;
+};
+
+struct Comet {
+	int ID;
+	int x;
+	int y;
+	bool live;
+	int speed;
+	int boundx;
+	int boundy;
+
+	int maxFrame;
+	int curFrame;
+	int frameCount;
+	int frameDelay;
+	int frameWidth;
+	int frameHeight;
+	int animationColumns;
+	int animationDirection;
+	int direction;
+	ALLEGRO_BITMAP *image;
 };
 
 struct Explosion{
@@ -72,5 +103,5 @@ struct Explosion{
 	int animationColumns;
 	int animationDirection;
 
-	ALLEGRO_BITMAP *image;
+	ALLEGRO_BITMAP *images;
 };

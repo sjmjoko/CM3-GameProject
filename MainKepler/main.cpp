@@ -8,9 +8,12 @@ using namespace std;
 
 
 //PUBLIC 
-const int WIDTH = 640;
-const int HEIGHT = 400;
-const int NUM_BULLETS = 20;
+const int WIDTH = 800;
+const int HEIGHT = 600;
+const int NUM_BULLETS = 10;
+const int NUM_ENEMY = 2;
+const int NUM_COMETS = 10;
+const int NUM_EXPLOSIONS = 5;
 enum KEYS{ A, LEFT, RIGHT,S};
 bool keys[4] = { false, false, false,false};
 
@@ -21,20 +24,40 @@ void RotateRight(SpaceShip &ship);
 void Accelerate(SpaceShip &ship);
 void RotateLeft(SpaceShip &ship);
 void ResetShipAnimation(SpaceShip &ship);
-void CollideComet(SpaceShip &ship);
 
 void DrawShieldTablet();
 void InvisibleShield(SpaceShip &ship);
-void KillObjects(Comet &comet,Bullet &bullet);//add ennimies
-
 void InitBullet(Bullet bullet[], int size, ALLEGRO_BITMAP *image);
 void DrawBullet(Bullet bullet[], int size, SpaceShip &ship);
 void FireBullet(Bullet bullet[], int size, SpaceShip &ship);
 void UpdateBullet(Bullet bullet[], int size, SpaceShip &ship);
-void CollideBullet(Bullet bullet[], int bSize, Comet comets[], int cSize, SpaceShip &ship);
+void CollideBullet(Bullet bullet[], int bSize, Comet comets[], int cSize, SpaceShip &ship, Explosion explosions[], int eSize);
+void CollideBullet_E(Bullet bullet[],Bullet bulletE[],int bSize, Enemy enemy[], int eSize, SpaceShip &ship);
 
+//Enemy
+void InitEnemy(Enemy enemy[], int size, ALLEGRO_BITMAP *image);
+void DrawEnemy(Enemy enemy[], int size);
+void DrawEnemyBullet(Bullet bullet[]);
+void StartEnemy(Enemy enemy[], int size);
+void UpdateEnemy(Enemy enemy[], int size,SpaceShip ship);
+void InitEnemyBullet(Bullet bullet[]);
+void FireEnemyBullet(Bullet bullet[],Enemy enemy[], SpaceShip &ship);
+void UpdateEnemyBullet(Bullet bullet[], Enemy enemy[], SpaceShip &ship);
+void CollideEnemy(Enemy enemy[], Bullet bulletE[], int cSize, SpaceShip &ship);
+void EnemyCollideBullet(Bullet bullet[], int bSize, SpaceShip &ship);
 
-void Explosion(SpaceShip &ship);
+//Comets
+void InitComet(Comet comets[], int size, ALLEGRO_BITMAP *image);
+void DrawComet(Comet comets[], int size);
+void StartComet(Comet comets[], int size);
+void UpdateComet(Comet comets[], int size);
+bool isReg(Comet comets[], int size);
+void CollideComet(Comet comets[], int cSize, SpaceShip &ship, Explosion explosions[], int eSize);
+
+void initExplosions(Explosion explosions[], int size, ALLEGRO_BITMAP *images);
+void DrawExplosions(Explosion explosions[], int size);
+void StartExplosions(Explosion explosions[], int size, int x, int y);
+void UpdateExplosions(Explosion explosions[], int size);
 
 
 
@@ -66,6 +89,10 @@ int main()
 	//classes
 	SpaceShip ship;
 	Bullet bullets[NUM_BULLETS];
+	Bullet bullets_E[1];
+	Enemy enemy[NUM_ENEMY];
+	Comet comets[NUM_COMETS];
+	Explosion explosions[NUM_EXPLOSIONS];
 
 	//ALLEGRO OBJECTS
 	ALLEGRO_DISPLAY *display = NULL;
@@ -73,7 +100,10 @@ int main()
 	ALLEGRO_BITMAP *image = NULL;
 	ALLEGRO_BITMAP *image_B = NULL;
 	ALLEGRO_BITMAP *image_R = NULL;
+	ALLEGRO_BITMAP  *enemyImage = NULL;
 	ALLEGRO_TIMER *timer = NULL;
+	ALLEGRO_BITMAP *cometImage;
+	ALLEGRO_BITMAP *expImage;
 
 
 
@@ -101,11 +131,23 @@ int main()
 	image_B = al_load_bitmap("Bullet.png");
 	al_convert_mask_to_alpha(image, al_map_rgb(255, 0, 255)); //clear background 
 	image_R = al_load_bitmap("rocky.png");
+	enemyImage = al_load_bitmap("sprite_sheet_demo.png");
+	al_convert_mask_to_alpha(enemyImage, al_map_rgb(106, 76, 48)); //clear background 
+	cometImage = al_load_bitmap("asteroid-1-96.png");
+	expImage = al_load_bitmap("explosion.png");
+
+	//Random
+	srand(time(NULL));
+
 	//CREATE TIMER 
 	timer = al_create_timer(1.0 / fps);
 	//INITIALIZE OBJECTS 
 	InitShip(ship, image);
 	InitBullet(bullets, NUM_BULLETS,image_B);
+	InitEnemyBullet(bullets_E);
+	InitEnemy(enemy, NUM_ENEMY, enemyImage);
+	InitComet(comets, NUM_COMETS, cometImage);
+	initExplosions(explosions, NUM_EXPLOSIONS, expImage);
 
 	//CREATE QUEUE
 	event_queue = al_create_event_queue();
@@ -150,30 +192,14 @@ int main()
 		{
 			redraw = true;
 
-
-			/*x = ship.x / 2;
-			y = ship.y / 2;*/
-
 			if (keys[LEFT])
 			{
 				RotateLeft(ship);
-				/*degree -= 5;
-				if (degree <= 0)
-				{
-				degree = 360;
-				}
-				cout << degree << endl;*/
 			}
 
 			else if (keys[RIGHT])
 			{
 				RotateRight(ship);
-				/*degree += 5;
-				if (degree >= 360)
-				{
-				degree = 0;
-				}
-				cout << degree << endl;*/
 			}
 			else
 			{
@@ -182,97 +208,24 @@ int main()
 			if (keys[A])
 			{
 				Accelerate(ship);
-				//if ((temph > 49 && temph <= 750) && (tempw > 49 && tempw <= 1230))
-				//{
-				//	if ((degree >= 340 && degree <= 360) || (degree >= 0 && degree <= 20)) //MOVE UP
-				//	{
-				//		temph -= 5;
-
-				//		if (temph < -5) temph = 2 * HEIGHT;
-				//		if (temph > 2 * HEIGHT) temph = -5 ;
-				//		if (tempw > 2*WIDTH)tempw = -5;
-				//		if (tempw <-5)tempw = 2 * WIDTH;
-
-				//		cout << temph << "   " << temph << endl;
-				//	}
-				//	if (degree >= 160 && degree <= 200)	// MOVE DOWN 
-				//	{
-				//		temph += 5;
-				//		if (temph < -5) temph = 2 * HEIGHT;
-				//		if (temph > 2 * HEIGHT) temph = -5;
-				//		if (tempw > 2 * WIDTH)tempw = -5;
-				//		if (tempw <-5)tempw = 2 * WIDTH;
-				//		
-				//		cout << temph << "   " << tempw << endl;
-				//	}
-				//	if (degree > 0 && degree < 90) // MOVE NORTH EAST
-				//	{
-				//		temph -= 5;
-				//		tempw += 5;
-
-				//		if (temph < -5) temph = 2 * HEIGHT;
-				//		if (temph > 2 * HEIGHT) temph = -5;
-				//		if (tempw > 2 * WIDTH)tempw = -5;
-				//		if (tempw <-5)tempw = 2 * WIDTH;
-				//		cout << temph << "   " << tempw << endl;
-				//	}
-				//	if (degree > 90 && degree < 180) //MOVE SOUTH EAST
-				//	{
-				//		temph += 5;
-				//		tempw += 5;
-				//		if (temph < -5) temph = 2 * HEIGHT;
-				//		if (temph > 2 * HEIGHT) temph = -5;
-				//		if (tempw > 2 * WIDTH)tempw = -5;
-				//		if (tempw <-5)tempw = 2 * WIDTH;
-				//		cout << temph << "   " << tempw << endl;
-				//	}
-				//	if (degree > 180 && degree < 270) //MOVE SOUTH WEST
-				//	{
-				//		temph += 5;
-				//		tempw -= 5;
-				//		if (temph <= 0) temph = 2 * HEIGHT;
-				//		if (temph >= 2 * HEIGHT + 1) temph = 45;
-				//		if (tempw >= 1300)tempw = -5;
-				//		cout << temph << "   " << tempw << endl;
-				//	}
-				//	if (degree > 270 && degree < 360) // MOVE NORTH WEST
-				//	{
-				//		temph -= 5;
-				//		tempw -= 5;
-				//		if (temph < -5) temph = 2 * HEIGHT;
-				//		if (temph > 2 * HEIGHT) temph = -5;
-				//		if (tempw > 2 * WIDTH)tempw = -5;
-				//		if (tempw <-5)tempw = 2 * WIDTH;
-				//		cout << temph << "   " << tempw << endl;
-				//	}
-				//	if (degree >= 70 && degree <= 110) //MOVE RIGHT
-				//	{
-				//		tempw += 5;
-				//		if (temph < -5) temph = 2 * HEIGHT;
-				//		if (temph > 2 * HEIGHT) temph = -5;
-				//		if (tempw > 2 * WIDTH)tempw = -5;
-				//		if (tempw <-5)tempw = 2 * WIDTH;
-				//		
-				//		cout << temph << "   " << tempw << endl;
-				//	}
-				//	if (degree >= 250 && degree <= 290)//MOVE LEFT
-				//	{
-				//		tempw -= 5;
-				//		if (temph < -5) temph = 2 * HEIGHT;
-				//		if (temph > 2 * HEIGHT) temph = -5;
-				//		if (tempw > 2 * WIDTH)tempw = -5;
-				//		if (tempw <-5)tempw = 2 * WIDTH;
-				//	
-				//		cout << temph << "   " << tempw << endl;
-				//	}
-				//	
-				//}
 			}
 
 			if (!isGameOver)
 			{	
+				CollideEnemy(enemy,bullets_E, NUM_ENEMY, ship);
+				CollideBullet_E(bullets,bullets_E, NUM_BULLETS, enemy, NUM_ENEMY, ship);
+				CollideComet(comets, NUM_COMETS, ship,explosions,NUM_EXPLOSIONS);
+				CollideBullet(bullets, NUM_BULLETS, comets, NUM_COMETS,ship,explosions,NUM_EXPLOSIONS);
+				EnemyCollideBullet(bullets_E,1, ship);
+				FireEnemyBullet(bullets_E, enemy, ship);
 				UpdateBullet(bullets, NUM_BULLETS,ship);
+				StartEnemy(enemy, NUM_ENEMY);
+				UpdateEnemy(enemy, NUM_ENEMY,ship);
+				StartComet(comets, NUM_COMETS);
+				UpdateComet(comets, NUM_COMETS);
+				UpdateExplosions(explosions, NUM_EXPLOSIONS);
 				// copy this to collide function 
+				
 				if (30 - boundxx < ship.x / 2 + ship.boundx && 30 + boundxx > ship.x / 2 - ship.boundx && HEIGHT / 2 - boundyy < ship.y / 2 + ship.boundy && HEIGHT / 2 + boundyy > ship.y / 2 - ship.boundy)
 				{
 
@@ -342,9 +295,14 @@ int main()
 
 			redraw = false;
 			if (!isGameOver)
-			{
+			{	
+				DrawComet(comets, NUM_COMETS);
+				DrawExplosions(explosions, NUM_EXPLOSIONS);
+				DrawEnemy(enemy, NUM_ENEMY);
+				DrawEnemyBullet(bullets_E);
+				DrawBullet(bullets, NUM_BULLETS, ship);
 				DrawShip(ship);
-				DrawBullet(bullets, NUM_BULLETS,ship);
+				
 				InvisibleShield(ship);
 				//al_draw_line(WIDTH / 2, 0, WIDTH / 2, HEIGHT, al_map_rgb(199, 4, 30), 5);
 				al_draw_bitmap(image_R, (xx - WIDTH / 2) + 30, yy, 0);
@@ -506,19 +464,6 @@ void ResetShipAnimation(SpaceShip &ship)
 	ship.animationRow = 0;
 
 }
-void CollideComet(SpaceShip &ship)
-{
-	//waiting for sthera with his rocks
-	/*if (30 - boundxx < x + boundx && 30 + boundxx > x - boundx && HEIGHT / 2 - boundyy < y + boundy && HEIGHT / 2 + boundyy > y - boundy)
-	{
-	lives--;
-
-	tempw = WIDTH;
-	temph = HEIGHT;
-	degree = 0;
-
-	}*/
-}
 void InvisibleShield(SpaceShip &ship)
 {
 	al_draw_circle(ship.x / 2, ship.y / 2, 75, al_map_rgb(255, 255, 0), 3);
@@ -567,7 +512,6 @@ void FireBullet(Bullet bullet[], int size, SpaceShip &ship)
 		}
 	}
 }
-
 void UpdateBullet(Bullet bullet[], int size,SpaceShip &ship)
 {
 	int R = 15;
@@ -582,13 +526,13 @@ void UpdateBullet(Bullet bullet[], int size,SpaceShip &ship)
 			bullet[i].x += R*(sin(ship.degree*3.14259/180));    //one bullet
 			bullet[i].y -= R*(cos(ship.degree*3.14259 / 180));
 
-			/*bullet[i].x += R*(sin((ship.degree+15)*3.14259 / 180)); // two bullets
-			bullet[i].y -= R*(cos((ship.degree + 15)*3.14259 / 180));
-			bullet[i].xx += R*(sin((ship.degree - 15)*3.14259 / 180));
-			bullet[i].yy -= R*(cos((ship.degree - 15)*3.14259 / 180));*/
+			//bullet[i].x += R*(sin((ship.degree+15)*3.14259 / 180)); // two bullets
+			//bullet[i].y -= R*(cos((ship.degree + 15)*3.14259 / 180));
+			//bullet[i].xx += R*(sin((ship.degree - 15)*3.14259 / 180));
+			//bullet[i].yy -= R*(cos((ship.degree - 15)*3.14259 / 180));
 
 
-			if (bullet[i].x >2*WIDTH||bullet[i].x<0||bullet[i].y>2*HEIGHT||bullet[i].y<0)
+			if (bullet[i].x >WIDTH||bullet[i].x<0||bullet[i].y>HEIGHT||bullet[i].y<0)
 			{
 				bullet[i].live = false;
 			}
@@ -596,7 +540,7 @@ void UpdateBullet(Bullet bullet[], int size,SpaceShip &ship)
 	}
 
 }
-void CollideBullet(Bullet bullet[], int bSize, Comet comets[], int cSize, SpaceShip &ship)
+void CollideBullet(Bullet bullet[], int bSize, Comet comets[], int cSize, SpaceShip &ship, Explosion explosions[], int eSize)
 {
 	for (int i = 0; i < bSize; i++)
 	{
@@ -608,11 +552,479 @@ void CollideBullet(Bullet bullet[], int bSize, Comet comets[], int cSize, SpaceS
 				{	//the bullets x position has to be greater then the comets left side ||| * |
 					if (bullet[i].x >(comets[j].x - comets[j].boundx) && bullet[i].y < (comets[j].y + comets[j].boundy) && bullet[i].x <(comets[j].x + comets[j].boundx) && bullet[i].y >(comets[j].y - comets[j].boundy))
 					{
+						//StartExplosions(explosions, eSize, ship.x, ship.y);
 						bullet[i].live = false;
 						comets[j].live = false;
-						ship.score++;
+						ship.score+=2;
 					}
 				}
+			}
+		}
+	}
+}
+void CollideBullet_E(Bullet bullet[],Bullet bulletE[],int bSize, Enemy enemy[], int eSize, SpaceShip &ship)
+{
+	for (int i = 0; i < bSize; i++)
+	{
+		if (bullet[i].live)
+		{
+			for (int j = 0; j < eSize; j++)
+			{ //bulet dont have a bounding box
+				if (enemy[j].live)
+				{	//the bullets x position has to be greater then the comets left side ||| * |
+					if (bullet[i].x >(enemy[j].x - enemy[j].boundx) && bullet[i].y < (enemy[j].y + enemy[j].boundy) && bullet[i].x <(enemy[j].x + enemy[j].boundx) && bullet[i].y >(enemy[j].y - enemy[j].boundy))
+					{
+						bullet[i].live = false;
+						enemy[j].live = false;
+						for (int b = 0; b < 2; b++)
+						{
+							bulletE[b].live = false;
+						}
+						ship.score+=5;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
+void InitEnemy(Enemy enemy[], int size, ALLEGRO_BITMAP *image)
+{
+	for (int i = 0; i < size; i++)
+	{
+		enemy[i].ID = ENEMY;
+		enemy[i].live = false;
+		enemy[i].speed = 3;
+		enemy[i].boundx = 15;
+		enemy[i].boundy = 15;
+
+		enemy[i].maxframe = 6;
+		enemy[i].curframe = 0;
+		enemy[i].frameCount = 0;
+		enemy[i].frameDelay = 2;
+		enemy[i].frameWidth = 40;
+		enemy[i].frameHeight = 40;
+
+		enemy[i].animationColumns = 6;
+
+		if (rand() % 2)
+			enemy[i].animationDirection = 1;
+		else
+			enemy[i].animationDirection = -1;
+
+		enemy[i].image = image;
+	}
+}
+void DrawEnemy(Enemy enemy[], int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (enemy[i].live)
+		{
+
+			int fx = (enemy[i].curframe % enemy[i].animationColumns)*enemy[i].frameWidth;
+			int fy = (enemy[i].curframe / enemy[i].animationColumns)*enemy[i].frameHeight;
+
+			al_draw_bitmap_region(enemy[i].image, fx, fy, enemy[i].frameWidth,
+				enemy[i].frameHeight, enemy[i].x - enemy[i].frameWidth / 2, enemy[i].y - enemy[i].frameHeight / 2, 0);
+
+			/*al_draw_filled_rectangle(comets[i].x - comets[i].boundx, comets[i].y - comets[i].boundy, comets[i].x + comets[i].boundx,
+			comets[i].y + comets[i].boundy, al_map_rgba(255, 0, 255, 100));
+
+			//al_draw_filled_circle(comets[i].x, comets[i].y, 20, al_map_rgb(255, 0, 0));*/
+		}
+	}
+}
+void StartEnemy(Enemy enemy[], int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (!enemy[i].live)
+		{
+			if (rand() % 500 == 0)
+			{
+				enemy[i].live = true;
+				enemy[i].x = WIDTH;
+				enemy[i].y = 30 + rand() % (HEIGHT - 60);
+				break;
+			}
+		}
+	}
+}
+void UpdateEnemy(Enemy enemy[], int size,SpaceShip ship)
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (enemy[i].live)
+		{
+			if (++enemy[i].x >= enemy[i].frameDelay)
+			{
+				enemy[i].curframe += enemy[i].animationDirection;
+				if (enemy[i].curframe >= enemy[i].maxframe)
+					enemy[i].curframe = 0;
+				else if (enemy[i].curframe <= 0)
+					enemy[i].curframe = enemy[i].maxframe - 1;
+
+				enemy[i].frameCount = 0;
+			}
+
+			enemy[i].x -= enemy[i].speed;
+	
+			}
+		}
+}
+void InitEnemyBullet(Bullet bullet[])
+{	
+	for (int i = 0; i < 1; ++i)
+	{
+		bullet[i].ID = BULLET;
+		bullet[i].speed = 5;
+		bullet[i].live = false;
+	}
+}
+void FireEnemyBullet(Bullet bullet[], Enemy enemy[], SpaceShip &ship)
+{
+	
+
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < 1; ++j)
+		{
+			if (!bullet[j].live && enemy[i].live)
+			{
+				bullet[j].x = enemy[i].x;
+				bullet[j].y = enemy[i].y + 17 ;
+				bullet[j].live = true;
+				break;
+			}
+		}
+
+		
+
+		UpdateEnemyBullet(bullet, enemy, ship);
+	}
+}
+void UpdateEnemyBullet(Bullet bullet[], Enemy enemy[], SpaceShip &ship)
+{
+	
+		for (int j = 0; j < 1; ++j)
+		{
+			if (bullet[j].live)
+			{
+				
+				bullet[j].y += bullet[j].speed;    //one bullet
+
+
+				//bullet[i].x += R*(sin((ship.degree+15)*3.14259 / 180)); // two bullets
+				//bullet[i].y -= R*(cos((ship.degree + 15)*3.14259 / 180));
+				//bullet[i].xx += R*(sin((ship.degree - 15)*3.14259 / 180));
+				//bullet[i].yy -= R*(cos((ship.degree - 15)*3.14259 / 180));
+
+
+				if (bullet[j].x > WIDTH || bullet[j].x<0 || bullet[j].y>HEIGHT || bullet[j].y < 0)
+				{
+					bullet[j].live = false;
+				}
+			}
+		}
+}
+void DrawEnemyBullet(Bullet bullet[])
+{
+	for (int i = 0; i < 1; ++i)
+	{
+		al_draw_filled_circle(bullet[i].x, bullet[i].y, 2, al_map_rgb(255, 255, 255));
+		//al_draw_filled_circle(bullet[i].xx, bullet[i].yy, 2, al_map_rgb(255, 255, 255));
+		//al_draw_rotated_bitmap(bullet[i].image, ship.frameWidth / 2, ship.frameHeight / 2, bullet[i].x/ 2, bullet[i].y/ 2, (ship.degree + 50)*3.14259 / 180, 0);
+	}
+
+}
+void CollideEnemy(Enemy enemy[], Bullet bulletE[],int eSize, SpaceShip &ship)
+{
+	for (int i = 0; i < eSize; i++)
+	{
+		if (enemy[i].live)
+		{
+			if (enemy[i].x - enemy[i].boundx < ship.x/2 + ship.boundx &&
+				enemy[i].x + enemy[i].boundx > ship.x/2 - ship.boundx &&
+				enemy[i].y - enemy[i].boundy < ship.y/2 + ship.boundy &&
+				enemy[i].y + enemy[i].boundy > ship.y/2 - ship.boundy)
+			{
+				ship.x = WIDTH;
+				ship.y = HEIGHT;
+				ship.degree = 0;
+				ship.lives--;
+				enemy[i].live = false;
+				for (int b = 0; b < 2; b++)
+				{
+					bulletE[b].live = false;
+				}
+			}
+			else if (enemy[i].x < 0)
+			{
+				enemy[i].live = false;
+				for (int b = 0; b < 2; b++)
+				{
+					bulletE[b].live = false;
+				}
+			}
+		}
+	}
+}
+
+void EnemyCollideBullet(Bullet bullet[], int bSize, SpaceShip &ship)
+{
+	for (int i = 0; i < bSize; i++)
+	{
+		if (bullet[i].live)
+		{
+			//bulet dont have a bounding box
+				{	//the bullets x position has to be greater then the comets left side ||| * |
+					if (bullet[i].x >(ship.x / 2 - ship.boundx) && bullet[i].y < (ship.y / 2 + ship.boundy) && bullet[i].x <(ship.x/2+ ship.boundx) && bullet[i].y >(ship.y/2 - ship.boundy))
+					{
+						bullet[i].live = false;
+						ship.lives--;
+
+						ship.x = WIDTH;
+						ship.y = HEIGHT;
+						ship.degree = 0;
+					}
+				}
+		}
+	}
+}
+
+bool isReg(Comet comets[], int size)
+{
+	bool x = true;
+	for (int i = 0; i < size; i++)
+	{
+		if (comets[i].live == true)
+		{
+			x = false;
+		}
+	}
+	return x;
+}
+void InitComet(Comet comets[], int size, ALLEGRO_BITMAP *image)
+{
+	for (int i = 0; i < size; i++)
+	{
+		comets[i].ID = ENEMY;
+		comets[i].live = false;
+		comets[i].speed = 1.5;
+		comets[i].boundx = 35;
+		comets[i].boundy = 35;
+
+		comets[i].maxFrame = 143;
+		comets[i].curFrame = 0;
+		comets[i].frameCount = 0;
+		comets[i].frameDelay = 2;
+		comets[i].frameWidth = 96;
+		comets[i].frameHeight = 96;
+		comets[i].animationColumns = 21;
+		comets[i].image = image;
+		if (rand())
+		{
+			comets[i].animationDirection = 1;
+		}
+		else
+		{
+			comets[i].animationDirection = -1;
+		}
+	}
+}
+void StartComet(Comet comets[], int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (!comets[i].live)
+		{
+			if (rand() % 300 == 0)
+			{
+				comets[i].direction = 3;
+				comets[i].live = true;
+				comets[i].x = 0;
+				comets[i].y = 30 + rand() % (HEIGHT - 60);
+				break;
+			}
+			if (rand() % 500 == 0)
+			{
+				comets[i].direction = 5;
+				comets[i].live = true;
+				comets[i].x = WIDTH;
+				comets[i].y = 30 + rand() % (HEIGHT - 60);
+				break;
+			}
+			if (rand() % 700 == 0)
+			{
+				comets[i].direction = 7;
+				comets[i].live = true;
+				comets[i].y = HEIGHT;
+				comets[i].x = 30 + rand() % (WIDTH - 60);
+				break;
+			}
+			if (rand() % 900 == 0)
+			{
+				comets[i].direction = 9;
+				comets[i].live = true;
+				comets[i].y = 0;
+				comets[i].x = 30 + rand() % (WIDTH - 60);
+				break;
+			}
+		}
+	}
+}
+void UpdateComet(Comet comets[], int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (comets[i].live)
+		{
+			if (++comets[i].frameCount >= comets[i].frameDelay)
+			{
+				comets[i].curFrame += comets[i].animationDirection;
+				if (comets[i].curFrame >= comets[i].maxFrame)
+					comets[i].curFrame = 0;
+				else if (comets[i].curFrame <= 0)
+					comets[i].curFrame = comets[i].maxFrame - 1;
+
+				comets[i].frameCount = 0;
+			}
+			if (comets[i].direction == 3)
+			{
+				comets[i].x += comets[i].speed;
+				if (comets[i].x == WIDTH)
+				{
+					comets[i].live = false;
+				}
+			}
+			if (comets[i].direction == 5)
+			{
+				comets[i].x -= comets[i].speed;
+				if (comets[i].x == 0)
+				{
+					comets[i].live = false;
+				}
+			}
+			if (comets[i].direction == 7)
+			{
+				comets[i].y -= comets[i].speed;
+				if (comets[i].y == 0)
+				{
+					comets[i].live = false;
+				}
+			}
+			if (comets[i].direction == 9)
+			{
+				comets[i].y += comets[i].speed;
+				if (comets[i].y == HEIGHT)
+				{
+					comets[i].live = false;
+				}
+			}
+		}
+	}
+}
+void CollideComet(Comet comets[], int cSize, SpaceShip &ship, Explosion explosions[], int eSize)
+{
+	for (int i = 0; i < cSize; i++)
+	{
+		if (comets[i].live)
+		{
+			if (comets[i].x - comets[i].boundx < ship.x/2 + ship.boundx &&
+				comets[i].x + comets[i].boundx > ship.x/2 - ship.boundx &&
+				comets[i].y - comets[i].boundy < ship.y/2 + ship.boundy &&
+				comets[i].y + comets[i].boundy > ship.y/2 - ship.boundy)
+			{
+				ship.lives--;
+				comets[i].live = false;
+				//StartExplosions(explosions, eSize, ship.x, ship.y);
+			}
+			else if (comets[i].x < 0)
+			{
+				comets[i].live = false;
+				ship.lives--;
+			}
+		}
+	}
+}
+void initExplosions(Explosion explosions[], int size, ALLEGRO_BITMAP *image)
+{
+	for (int i = 0; i < size; i++)
+	{
+		explosions[i].live = false;
+
+		explosions[i].maxFrame = 31;
+		explosions[i].curFrame = 0;
+		explosions[i].frameCount = 0;
+		explosions[i].frameDelay = 1;
+		explosions[i].frameWidth = 128;
+		explosions[i].frameHeight = 128;
+		explosions[i].animationColumns = 8;
+		explosions[i].animationDirection = 1;
+
+		explosions[i].images = image;
+	}
+}
+void DrawComet(Comet comets[], int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (comets[i].live)
+		{
+			int fx = (comets[i].curFrame % comets[i].animationColumns) * comets[i].frameWidth;
+			int fy = (comets[i].curFrame / comets[i].animationColumns) * comets[i].frameHeight;
+
+			al_draw_bitmap_region(comets[i].image, fx, fy, comets[i].frameWidth,
+				comets[i].frameHeight, comets[i].x - comets[i].frameWidth / 2, comets[i].y - comets[i].frameHeight / 2, 0);
+		}
+	}
+}
+void DrawExplosions(Explosion explosions[], int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (explosions[i].live)
+		{
+			int fx = (explosions[i].curFrame % explosions[i].animationColumns) * explosions[i].frameWidth;
+			int fy = (explosions[i].curFrame / explosions[i].animationColumns) * explosions[i].frameHeight;
+
+			al_draw_bitmap_region(explosions[i].images, fx, fy, explosions[i].frameWidth,
+				explosions[i].frameHeight, explosions[i].x - explosions[i].frameWidth / 2, explosions[i].y - explosions[i].frameHeight / 2, 0);
+		}
+	}
+}
+void StartExplosions(Explosion explosions[], int size, int x, int y)
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (!explosions[i].live)
+		{
+			explosions[i].live = true;
+			explosions[i].x = x;
+			explosions[i].y = y;
+			break;
+		}
+	}
+}
+void UpdateExplosions(Explosion explosions[], int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (explosions[i].live)
+		{
+			if (++explosions[i].frameCount >= explosions[i].frameDelay)
+			{
+				explosions[i].curFrame += explosions[i].animationDirection;
+				if (explosions[i].curFrame >= explosions[i].maxFrame)
+				{
+					explosions[i].curFrame = 0;
+					explosions[i].live = false;
+				}
+
+				explosions[i].frameCount = 0;
 			}
 		}
 	}
