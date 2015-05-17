@@ -13,11 +13,12 @@ void InitComet(Comet comets[], int size, ALLEGRO_BITMAP *image);
 void DrawComet(Comet comets[], int size);
 void StartComet(Comet comets[], int size);
 void UpdateComet(Comet comets[], int size);
+//void CollideComet(Comet comets[], int cSize, SpaceShip &ship, Explosion explosions[], int eSize);
 
-/*void InitExplosions(Explosions explosions[], int size, ALLEGRO_BITMAP *picture);
+void InitExplosions(Explosions explosions[], int size, ALLEGRO_BITMAP *picture);
 void DrawExplosions(Explosions explosions[], int size);
 void StartExplosions(Explosions explosions[], int size, int x, int y);
-void UpdateExplosions(Explosions explosions[], int size);*/
+void UpdateExplosions(Explosions explosions[], int size);
 
 int main()
 {
@@ -27,13 +28,13 @@ int main()
 	bool isGameOver = false;
 
 	Comet comets[NUM_COMETS];
-	//Explosions explosions[NUM_EXPLOSIONS];
+	Explosions explosions[NUM_EXPLOSIONS];
 
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
 	ALLEGRO_BITMAP *cometImage;
-	//ALLEGRO_BITMAP *expImage;
+	ALLEGRO_BITMAP *expImage;
 	if (!al_init())										//initialize Allegro
 		return -1;
 
@@ -50,11 +51,11 @@ int main()
 	timer = al_create_timer(1.0 / FPS);
 
 	cometImage = al_load_bitmap("asteroid-1-96.png");
-	//expImage = al_load_bitmap("explosion.png");
+	expImage = al_load_bitmap("explosion.png");
 
 	srand(time(NULL));
 	InitComet(comets, NUM_COMETS, cometImage);
-	//InitExplosions(explosions, NUM_EXPLOSIONS, expImage);
+	InitExplosions(explosions, NUM_EXPLOSIONS, expImage);
 
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(event_queue, al_get_display_event_source(display));
@@ -71,7 +72,7 @@ int main()
 			{
 				StartComet(comets, NUM_COMETS);
 				UpdateComet(comets, NUM_COMETS);
-				//UpdateExplosions(explosions, NUM_EXPLOSIONS);
+				UpdateExplosions(explosions, NUM_EXPLOSIONS);
 			}
 		}
 		else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
@@ -85,13 +86,13 @@ int main()
 			if (!isGameOver)
 			{
 				DrawComet(comets, NUM_COMETS);
-				//DrawExplosions(explosions, NUM_EXPLOSIONS);
+				DrawExplosions(explosions, NUM_EXPLOSIONS);
 			}
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 		}
 	}
-	//al_destroy_bitmap(expImage);
+	al_destroy_bitmap(expImage);
 	al_destroy_bitmap(cometImage);
 	al_destroy_event_queue(event_queue);
 	al_destroy_timer(timer);
@@ -205,6 +206,71 @@ void DrawComet(Comet comets[], int size)
 
 			al_draw_bitmap_region(comets[i].image, fx, fy, comets[i].frameWidth,
 				comets[i].frameHeight, comets[i].x - comets[i].frameWidth / 2, comets[i].y - comets[i].frameHeight / 2, 0);
+		}
+	}
+}
+void InitExplosions(Explosions explosions[], int size, ALLEGRO_BITMAP *image)
+{
+	for (int i = 0; i < size; i++)
+	{
+		explosions[i].live = false;
+
+		explosions[i].maxFrame = 31;
+		explosions[i].curFrame = 0;
+		explosions[i].frameCount = 0;
+		explosions[i].frameDelay = 1;
+		explosions[i].frameWidth = 128;
+		explosions[i].frameHeight = 128;
+		explosions[i].animationColumns = 8;
+		explosions[i].animationDirection = 1;
+
+		explosions[i].image = image;
+	}
+}
+void DrawExplosions(Explosions explosions[], int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (explosions[i].live)
+		{
+			int fx = (explosions[i].curFrame % explosions[i].animationColumns) * explosions[i].frameWidth;
+			int fy = (explosions[i].curFrame / explosions[i].animationColumns) * explosions[i].frameHeight;
+
+			al_draw_bitmap_region(explosions[i].image, fx, fy, explosions[i].frameWidth,
+				explosions[i].frameHeight, explosions[i].x - explosions[i].frameWidth / 2, explosions[i].y - explosions[i].frameHeight / 2, 0);
+		}
+	}
+}
+void StartExplosions(Explosions explosions[], int size, int x, int y)
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (!explosions[i].live)
+		{
+			explosions[i].live = true;
+			explosions[i].x = x;
+			explosions[i].y = y;
+			break;
+		}
+	}
+}
+void UpdateExplosions(Explosions explosions[], int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (explosions[i].live)
+		{
+			if (++explosions[i].frameCount >= explosions[i].frameDelay)
+			{
+				explosions[i].curFrame += explosions[i].animationDirection;
+				if (explosions[i].curFrame >= explosions[i].maxFrame)
+				{
+					explosions[i].curFrame = 0;
+					explosions[i].live = false;
+				}
+
+				explosions[i].frameCount = 0;
+			}
 		}
 	}
 }
