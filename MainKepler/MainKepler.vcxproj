@@ -11,11 +11,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Asteroid.cpp" />
+    <ClCompile Include="ENdefinition.cpp" />
     <ClCompile Include="GameStates.cpp" />
     <ClCompile Include="Kepler.cpp" />
+    <ClCompile Include="KSdefinition.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Enemyship.h" />
     <ClInclude Include="GameStates.h" />
+    <ClInclude Include="Keplership.h" />
     <ClInclude Include="ObjectKPLR.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
