@@ -19,7 +19,6 @@ int main()
 {
 	int const NUM_COMETS = 10;
 	int const NUM_EXPLOSIONS = 5;
-	int score, life;
 	bool isGameOver = false;
 	bool redraw = false;
 	GameStates Kepler;
