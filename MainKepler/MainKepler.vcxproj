@@ -25,6 +25,14 @@
     <ClInclude Include="GameStates.h" />
     <ClInclude Include="Keplership.h" />
     <ClInclude Include="ObjectKPLR.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MainKepler.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
+    <Image Include="icon1.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B17B0B81-277B-4451-B48C-FF3D2AB32EFB}</ProjectGuid>

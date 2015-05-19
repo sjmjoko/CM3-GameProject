@@ -138,26 +138,26 @@ int main()
 			Kepler.render = true;
 
 			redraw = true;
-			if (!isGameOver)
-			{
-				Enship.collideEBullet(bullets_E, Enship.Bullets, obShip, explosions, NUM_EXPLOSIONS,Comet);//EnemyCollideBullet(bullets_E,1, ship);
-				Enship.collide(obEnemy, bullets_E, Enship.ENEMY, obShip, explosions, NUM_EXPLOSIONS, Comet);//CollideEnemy(enemy,bullets_E, NUM_ENEMY, ship);
-				Kepship.collideEBullet(bullets, bullets_E, Kepship.Bullets, obEnemy, Enship.ENEMY, obShip, explosions, NUM_EXPLOSIONS, Comet);//CollideBullet_E(bullets,bullets_E, NUM_BULLETS, enemy, NUM_ENEMY, ship);
-				Kepship.collideCBullet(bullets, Kepship.Bullets, comets, NUM_COMETS, obShip, explosions, NUM_EXPLOSIONS, Comet);//CollideComet(comets, NUM_COMETS, ship,explosions,NUM_EXPLOSIONS);
-				Comet.CollideComet(comets, NUM_COMETS, obShip, explosions, NUM_EXPLOSIONS, Comet);
-				Enship.fireBullets(bullets_E, Enship.Bullets, obEnemy, obShip);//FireEnemyBullet(bullets_E, enemy, ship);
-				Kepship.updateBullet(bullets, Kepship.Bullets, obShip);//UpdateBullet(bullets, NUM_BULLETS,ship);
-				Enship.startEnemy(obEnemy, Enship.ENEMY);//StartEnemy(enemy, NUM_ENEMY);
-				Enship.updateEnemy(obEnemy, Enship.ENEMY, obShip);//UpdateEnemy(enemy, NUM_ENEMY,ship);
-				Comet.StartComet(comets, NUM_COMETS);
-				Comet.UpdateComet(comets, NUM_COMETS);
-				Comet.UpdateExplosions(explosions, NUM_EXPLOSIONS);
+			//if (!isGameOver)
+			//{
+			//	Enship.collideEBullet(bullets_E, Enship.Bullets, obShip, explosions, NUM_EXPLOSIONS,Comet);//EnemyCollideBullet(bullets_E,1, ship);
+			//	Enship.collide(obEnemy, bullets_E, Enship.ENEMY, obShip, explosions, NUM_EXPLOSIONS, Comet);//CollideEnemy(enemy,bullets_E, NUM_ENEMY, ship);
+			//	Kepship.collideEBullet(bullets, bullets_E, Kepship.Bullets, obEnemy, Enship.ENEMY, obShip, explosions, NUM_EXPLOSIONS, Comet);//CollideBullet_E(bullets,bullets_E, NUM_BULLETS, enemy, NUM_ENEMY, ship);
+			//	Kepship.collideCBullet(bullets, Kepship.Bullets, comets, NUM_COMETS, obShip, explosions, NUM_EXPLOSIONS, Comet);//CollideComet(comets, NUM_COMETS, ship,explosions,NUM_EXPLOSIONS);
+			//	Comet.CollideComet(comets, NUM_COMETS, obShip, explosions, NUM_EXPLOSIONS, Comet);
+			//	Enship.fireBullets(bullets_E, Enship.Bullets, obEnemy, obShip);//FireEnemyBullet(bullets_E, enemy, ship);
+			//	Kepship.updateBullet(bullets, Kepship.Bullets, obShip);//UpdateBullet(bullets, NUM_BULLETS,ship);
+			//	Enship.startEnemy(obEnemy, Enship.ENEMY);//StartEnemy(enemy, NUM_ENEMY);
+			//	Enship.updateEnemy(obEnemy, Enship.ENEMY, obShip);//UpdateEnemy(enemy, NUM_ENEMY,ship);
+			//	Comet.StartComet(comets, NUM_COMETS);
+			//	Comet.UpdateComet(comets, NUM_COMETS);
+			//	Comet.UpdateExplosions(explosions, NUM_EXPLOSIONS);
 
-				if (obShip.lives <= 0)
-				{
-					isGameOver = true;
-				}
-			}
+			//	if (obShip.lives <= 0)
+			//	{
+			//		isGameOver = true;
+			//	}
+			//}
 
 			if (Kepler.state == Kepler.MENU)
 			{
@@ -232,7 +232,28 @@ int main()
 				al_stop_sample_instance(Kepler.instance3);
 
 				Kepler.drawPlayingBackground(Kepler.PBG);
+				//-------------------------------------------
+				if (!isGameOver)
+				{
+					Enship.collideEBullet(bullets_E, Enship.Bullets, obShip, explosions, NUM_EXPLOSIONS, Comet);//EnemyCollideBullet(bullets_E,1, ship);
+					Enship.collide(obEnemy, bullets_E, Enship.ENEMY, obShip, explosions, NUM_EXPLOSIONS, Comet);//CollideEnemy(enemy,bullets_E, NUM_ENEMY, ship);
+					Kepship.collideEBullet(bullets, bullets_E, Kepship.Bullets, obEnemy, Enship.ENEMY, obShip, explosions, NUM_EXPLOSIONS, Comet);//CollideBullet_E(bullets,bullets_E, NUM_BULLETS, enemy, NUM_ENEMY, ship);
+					Kepship.collideCBullet(bullets, Kepship.Bullets, comets, NUM_COMETS, obShip, explosions, NUM_EXPLOSIONS, Comet);//CollideComet(comets, NUM_COMETS, ship,explosions,NUM_EXPLOSIONS);
+					Comet.CollideComet(comets, NUM_COMETS, obShip, explosions, NUM_EXPLOSIONS, Comet);
+					Enship.fireBullets(bullets_E, Enship.Bullets, obEnemy, obShip);//FireEnemyBullet(bullets_E, enemy, ship);
+					Kepship.updateBullet(bullets, Kepship.Bullets, obShip);//UpdateBullet(bullets, NUM_BULLETS,ship);
+					Enship.startEnemy(obEnemy, Enship.ENEMY);//StartEnemy(enemy, NUM_ENEMY);
+					Enship.updateEnemy(obEnemy, Enship.ENEMY, obShip);//UpdateEnemy(enemy, NUM_ENEMY,ship);
+					Comet.StartComet(comets, NUM_COMETS);
+					Comet.UpdateComet(comets, NUM_COMETS);
+					Comet.UpdateExplosions(explosions, NUM_EXPLOSIONS);
 
+					if (obShip.lives <= 0)
+					{
+						isGameOver = true;
+					}
+				}
+				//-----------------------------------------------
 				if (redraw && al_is_event_queue_empty(Kepler.event_queue))
 				{
 					redraw = false;
@@ -254,6 +275,7 @@ int main()
 				{
 				case 0:
 					isGameOver = true;
+					
 					Kepler.state = Kepler.GAMEOVER;
 					break;
 				case 1:
