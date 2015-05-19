@@ -10,6 +10,14 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GameStates.cpp" />
+    <ClCompile Include="Kepler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameStates.h" />
+    <ClInclude Include="ObjectKPLR.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B17B0B81-277B-4451-B48C-FF3D2AB32EFB}</ProjectGuid>
     <RootNamespace>MainKepler</RootNamespace>
@@ -64,12 +72,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="objects.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

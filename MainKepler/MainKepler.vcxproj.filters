@@ -15,12 +15,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="GameStates.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Kepler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="objects.h">
+    <ClInclude Include="GameStates.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectKPLR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
