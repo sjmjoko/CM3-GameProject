@@ -326,10 +326,11 @@ int main()
 				Kepler.drawBackground(Kepler.BG);
 				al_draw_text(Kepler.font18, al_map_rgb(255, 0, 0), 0, 30, ALLEGRO_ALIGN_LEFT, "Are you sure you want to quit?");
 
-				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), Kepler.getWIDTH() / 2, Kepler.getHEIGHT() / 2, ALLEGRO_ALIGN_CENTRE, "Press Escape to Exit the Game");
+				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), Kepler.getWIDTH() / 2, Kepler.getHEIGHT() / 2, ALLEGRO_ALIGN_CENTRE, "Press Space to Exit the Game");
 				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), Kepler.getWIDTH() / 2, (Kepler.getHEIGHT() / 2) + 30, ALLEGRO_ALIGN_CENTRE, "Press ENTER to go to MENU");
 				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 255), 0, Kepler.getHEIGHT() - 100, ALLEGRO_ALIGN_LEFT, "Thank you for playing Kepler");
 				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 150), 0, Kepler.getHEIGHT() - 90, ALLEGRO_ALIGN_LEFT, "Created by:");
+				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 255), 0, Kepler.getHEIGHT() - 80, ALLEGRO_ALIGN_LEFT, "Sesethu Mhlana");
 				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 255), 0, Kepler.getHEIGHT() - 70, ALLEGRO_ALIGN_LEFT, "Matsobane Makhura");
 				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 255), 0, Kepler.getHEIGHT() - 60, ALLEGRO_ALIGN_LEFT, "Sithembile Dubazane");
 				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 255), 0, Kepler.getHEIGHT() - 50, ALLEGRO_ALIGN_LEFT, "Mafu Mxenge");

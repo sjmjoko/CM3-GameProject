@@ -32,7 +32,7 @@ public:
 
 
 	const int ENEMY = 2;
-	const int Bullets = 5;
+	const int Bullets = 8;
 	int iRand;
 
 protected:

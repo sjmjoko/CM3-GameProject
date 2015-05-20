@@ -36,7 +36,7 @@ void Enemyship::initBullets(Bullet bullet[], int size)
 }
 void Enemyship::drawBullets(Bullet bullet[])
 {
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < 8; ++i)
 	{
 		al_draw_filled_circle(bullet[i].x, bullet[i].y, 2, al_map_rgb(255, 255, 255));
 	}
@@ -64,7 +64,7 @@ void Enemyship::fireBullets(Bullet bullet[], int size, objectKPLR enemy[],object
 }
 void Enemyship::updateBullet(Bullet bullet[],objectKPLR[], objectKPLR &ship)
 {
-	for (int j = 0; j < 1; ++j)
+	for (int j = 0; j < 8; ++j)
 	{
 		if (bullet[j].live)
 		{
@@ -203,7 +203,7 @@ void Enemyship::updateEnemy(objectKPLR enemy[], int size, objectKPLR &ship)
 			}
 
 			enemy[i].x -= enemy[i].speed;
-
+			enemy[i].y += -rand()%2 + sin(rand()%90*(3.145/180));
 		}
 	}
 }
