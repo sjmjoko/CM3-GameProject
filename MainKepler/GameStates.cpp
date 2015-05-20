@@ -44,7 +44,7 @@ int GameStates::gameInit()
 	if (!al_init())										//initialize Allegro
 		return -1;
 
-	// al_set_new_display_flags(ALLEGRO_FULLSCREEN);
+	al_set_new_display_flags(ALLEGRO_FULLSCREEN);
 	display = al_create_display(WIDTH, HEIGHT);			//create our display object
 
 	if (!display)										//test display object
