@@ -27,6 +27,8 @@ Keplership::~Keplership()
 //ship bullets and collision
 void Keplership::initBullets(Bullet bullet[], int size)
 {
+	fire = al_load_sample("fire.wav");
+	instanceFire = al_create_sample_instance(fire);
 	for (int i = 0; i < size; i++)
 	{
 		bullet[i].speed = 2;
@@ -38,8 +40,6 @@ void Keplership::drawBullets(Bullet bullet[], int size, objectKPLR &ship)
 	for (int i = 0; i < size; ++i)
 	{
 		al_draw_filled_circle(bullet[i].x, bullet[i].y, 2, al_map_rgb(255, 255, 255));
-		//al_draw_filled_circle(bullet[i].xx, bullet[i].yy, 2, al_map_rgb(255, 255, 255));
-		//al_draw_rotated_bitmap(bullet[i].image, ship.frameWidth / 2, ship.frameHeight / 2, bullet[i].x/ 2, bullet[i].y/ 2, (ship.degree + 50)*3.14259 / 180, 0);
 	}
 }
 void Keplership::fireBullets(Bullet bullet[], int size, objectKPLR &ship)
@@ -72,12 +72,6 @@ void Keplership::updateBullet(Bullet bullet[], int size, objectKPLR &ship)
 		{
 			bullet[i].x += R*(sin(ship.degree*3.14259 / 180));    //one bullet
 			bullet[i].y -= R*(cos(ship.degree*3.14259 / 180));
-
-			//bullet[i].x += R*(sin((ship.degree+15)*3.14259 / 180)); // two bullets
-			//bullet[i].y -= R*(cos((ship.degree + 15)*3.14259 / 180));
-			//bullet[i].xx += R*(sin((ship.degree - 15)*3.14259 / 180));
-			//bullet[i].yy -= R*(cos((ship.degree - 15)*3.14259 / 180));
-
 
 			if (bullet[i].x >WIDTH || bullet[i].x<0 || bullet[i].y>HEIGHT || bullet[i].y<0)
 			{
@@ -145,7 +139,9 @@ void Keplership::collideEBullet(Bullet bullet[], Bullet bulletE[], int bSize, ob
 //ship movements
 void Keplership::initKeplership(objectKPLR &ship, ALLEGRO_BITMAP *image)
 {
-
+	thrust = al_load_sample("asteroids_thrust.wav");
+	instanceThrust = al_create_sample_instance(thrust);
+	al_attach_sample_instance_to_mixer(instanceThrust, al_get_default_mixer());
 	ship.x = WIDTH;
 	ship.y = HEIGHT;
 	ship.lives = 4;

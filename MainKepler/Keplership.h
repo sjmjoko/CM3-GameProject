@@ -19,6 +19,10 @@ public:
 	~Keplership();
 	//ship bullets
 	ALLEGRO_BITMAP *shipImage;
+	ALLEGRO_SAMPLE *thrust = NULL;
+	ALLEGRO_SAMPLE *fire = NULL;
+	ALLEGRO_SAMPLE_INSTANCE *instanceThrust = NULL;
+	ALLEGRO_SAMPLE_INSTANCE *instanceFire = NULL;
 	void initBullets(Bullet [], int );
 	void drawBullets(Bullet[], int, objectKPLR&);
 	void fireBullets(Bullet[], int, objectKPLR&);
