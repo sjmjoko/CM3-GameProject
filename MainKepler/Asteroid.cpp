@@ -6,8 +6,6 @@ Asteroid::Asteroid()
 }
 void Asteroid::InitComet(objectKPLR comets[], int size, ALLEGRO_BITMAP *image)
 {
-
-
 	for (int i = 0; i < size; i++)
 	{
 		comets[i].live = false;
@@ -157,7 +155,6 @@ void Asteroid::CollideComet(objectKPLR comets[], int cSize, objectKPLR &ship, ob
 				ship.degree = 0;
 				ship.lives--;
 				comets[i].live = false;
-				
 			}
 			else if (comets[i].x < 0)
 			{
@@ -180,6 +177,8 @@ bool Asteroid::isReg(objectKPLR comets[], int size)
 }
 void Asteroid::initExplosions(objectKPLR explosions[], int size, ALLEGRO_BITMAP *image)
 {
+	exp = al_load_sample("bangLarge.wav");
+	instanceExp = al_create_sample_instance(exp);
 	for (int i = 0; i < size; i++)
 	{
 		explosions[i].live = false;
@@ -216,6 +215,7 @@ void Asteroid::StartExplosions(objectKPLR explosions[], int size, int x, int y)
 	{
 		if (!explosions[i].live)
 		{
+			al_play_sample(exp, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 			explosions[i].live = true;
 			explosions[i].x = x;
 			explosions[i].y = y;

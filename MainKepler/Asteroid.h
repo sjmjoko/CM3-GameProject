@@ -15,6 +15,8 @@ public:
 	Asteroid();
 	ALLEGRO_BITMAP *cometImage;
 	ALLEGRO_BITMAP *expImage;
+	ALLEGRO_SAMPLE *exp = NULL;
+	ALLEGRO_SAMPLE_INSTANCE *instanceExp = NULL;
 
 	void InitComet(objectKPLR comets[], int size, ALLEGRO_BITMAP *image);
 	void StartComet(objectKPLR comets[], int size);

@@ -41,8 +41,8 @@ int main()
 
 	Kepship.shipImage = al_load_bitmap("Kepler-sprite.png");
 	al_convert_mask_to_alpha(Kepship.shipImage, al_map_rgb(255, 0, 255)); //clear background
-	Enship.enemyImage = al_load_bitmap("sprite_sheet_demo.png");
-	al_convert_mask_to_alpha(Enship.enemyImage, al_map_rgb(255, 0, 255)); //fix mafu's sprite
+	Enship.enemyImage = al_load_bitmap("sprite_sheet_demo.bmp");
+	al_convert_mask_to_alpha(Enship.enemyImage, al_map_rgb(0, 0, 0)); //fix mafu's sprite
 
 	Comet.cometImage = al_load_bitmap("asteroid-1-96.png");
 	Comet.expImage = al_load_bitmap("explosion.png");
@@ -51,6 +51,7 @@ int main()
 	
 	Kepler.timer = al_create_timer(1.0 / 60);
 	//INITIALIZE OBJECTS 
+
 	Kepship.initKeplership(obShip, Kepship.shipImage);//InitShip(ship, image);
 	Kepship.initBullets(bullets, Kepship.Bullets);//InitBullet(bullets, NUM_BULLETS,image_B);
 	Enship.initship(obEnemy, Enship.ENEMY, Enship.enemyImage);//InitEnemy(enemy, NUM_ENEMY, enemyImage);
@@ -142,7 +143,8 @@ int main()
 			if (Kepler.state == Kepler.MENU)
 			{
 				if (keys[Kepler.SPACE])
-					Kepler.state = Kepler.PLAYING;
+					if (!isGameOver)
+						Kepler.state = Kepler.PLAYING;
 				if (keys[Kepler.ESCAPE])
 					Kepler.state = Kepler.GAMEOVER;
 			}
@@ -173,12 +175,28 @@ int main()
 				if (keys[Kepler.ESCAPE])
 					Kepler.state = Kepler.GAMEOVER;
 			}
+			else if (Kepler.state == Kepler.TRANSITION)
+			{
+				if (keys[Kepler.ENTER])
+					Kepler.state = Kepler.GAMEOVER;
+			}
 			else if (Kepler.state == Kepler.GAMEOVER)
 			{
 				if (keys[Kepler.SPACE])
 					Kepler.done = true;
 				if (keys[Kepler.ENTER])
+				{
 					Kepler.state = Kepler.MENU;
+					Kepship.initKeplership(obShip, Kepship.shipImage);//InitShip(ship, image);
+					Kepship.initBullets(bullets, Kepship.Bullets);//InitBullet(bullets, NUM_BULLETS,image_B);
+					Enship.initship(obEnemy, Enship.ENEMY, Enship.enemyImage);//InitEnemy(enemy, NUM_ENEMY, enemyImage);
+					Enship.initBullets(bullets_E, Enship.Bullets);//InitEnemyBullet(bullets_E);
+					Comet.InitComet(comets, NUM_COMETS, Comet.cometImage);
+					Comet.initExplosions(explosions, NUM_EXPLOSIONS, Comet.expImage);
+					obShip.score = 0;
+				}
+
+				/////////////////////////////////////////////////////////////////////////
 			}
 		}
 		//==============================================
@@ -197,10 +215,10 @@ int main()
 				Kepler.drawBackground(Kepler.SSG);
 
 				al_stop_sample_instance(Kepler.instanceEnd);
-				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), 0, Kepler.getHEIGHT() - 110, ALLEGRO_ALIGN_LEFT, "CONTROLS");
-				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 150), 0, Kepler.getHEIGHT() - 80, ALLEGRO_ALIGN_LEFT, "Arrow Keys : Steer");
-				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 150), 0, Kepler.getHEIGHT() - 50, ALLEGRO_ALIGN_LEFT, "S           :  Shoot");
-				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 150), 0, Kepler.getHEIGHT() - 20, ALLEGRO_ALIGN_LEFT, "A           : Accelerate");
+				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), 10, Kepler.getHEIGHT() - 110, ALLEGRO_ALIGN_LEFT, "CONTROLS");
+				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 150), 10, Kepler.getHEIGHT() - 80, ALLEGRO_ALIGN_LEFT, "Left/Right : Steer");
+				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 150), 10, Kepler.getHEIGHT() - 50, ALLEGRO_ALIGN_LEFT, "Space       :  Shoot");
+				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 150), 10, Kepler.getHEIGHT() - 20, ALLEGRO_ALIGN_LEFT, "Up              : Accelerate");
 				al_draw_text(Kepler.menuFont, al_map_rgb(100, 255, 150), Kepler.getWIDTH() / 2, Kepler.getHEIGHT() / 3, ALLEGRO_ALIGN_CENTRE, "Kepler");
 				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), Kepler.getWIDTH() / 2, (Kepler.getHEIGHT() / 2) + 40, ALLEGRO_ALIGN_CENTRE, "Press Space to Play");
 				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), Kepler.getWIDTH() / 2, (Kepler.getHEIGHT() / 2) + 70, ALLEGRO_ALIGN_CENTRE, "Press Escape to End");
@@ -231,7 +249,7 @@ int main()
 
 					if (obShip.lives <= 0)
 					{
-						isGameOver = true;
+						Kepler.state = Kepler.TRANSITION;
 					}
 				}
 				//-----------------------------------------------
@@ -255,8 +273,8 @@ int main()
 				switch (obShip.lives)
 				{
 				case 0:
-					isGameOver = true;
-					Kepler.state = Kepler.GAMEOVER;
+					//isGameOver = true;
+					Kepler.state = Kepler.TRANSITION;
 					break;
 				case 1:
 					al_draw_text(Kepler.lives, al_map_rgb(255, 255, 255), 0, 10, ALLEGRO_ALIGN_LEFT, "A");
@@ -275,6 +293,29 @@ int main()
 				}
 				al_draw_textf(Kepler.font18, al_map_rgb(255, 255, 255), 0, 40, ALLEGRO_ALIGN_LEFT, "%i",obShip.score);
 				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), Kepler.getWIDTH() - 60, Kepler.getHEIGHT() - 30, ALLEGRO_ALIGN_CENTRE, "Quit = ESC");
+				if (Kepship.isWon(obShip))
+				{
+					Kepler.state = Kepler.TRANSITION;
+				}
+			}
+			else if (Kepler.state == Kepler.TRANSITION)
+			{
+				al_stop_sample_instance(Kepler.instance3);
+				al_play_sample_instance(Kepler.instanceEnd);
+				al_stop_sample_instance(Kepler.instance3);
+
+				Kepler.drawBackground(Kepler.BG);
+				if (Kepship.isWon(obShip))
+				{
+					al_draw_text(Kepler.font18, al_map_rgb(255, 0, 0), (Kepler.getHEIGHT() / 2) + 30, (Kepler.getHEIGHT() / 2) - 60, ALLEGRO_ALIGN_CENTRE, "CONGRATULATIONS!");
+					al_draw_text(Kepler.font18, al_map_rgb(255, 0, 0), (Kepler.getHEIGHT() / 2) + 30, (Kepler.getHEIGHT() / 2) - 30, ALLEGRO_ALIGN_CENTRE, "You managed to save the human race.");
+				}
+				if (obShip.lives == 0)
+				{
+					al_draw_text(Kepler.font18, al_map_rgb(255, 0, 0), (Kepler.getHEIGHT() / 2) + 30, (Kepler.getHEIGHT() / 2) - 60, ALLEGRO_ALIGN_CENTRE, "Please try again, the human race depends on you.");
+				}
+
+				al_draw_text(Kepler.font18, al_map_rgb(255, 0, 0), (Kepler.getHEIGHT() / 2) + 30, (Kepler.getHEIGHT() / 2) - 30, ALLEGRO_ALIGN_CENTRE, "Press ENTER to continue.");
 			}
 			else if (Kepler.state == Kepler.GAMEOVER)
 			{
@@ -284,7 +325,13 @@ int main()
 
 				Kepler.drawBackground(Kepler.BG);
 				al_draw_text(Kepler.font18, al_map_rgb(255, 0, 0), 0, 30, ALLEGRO_ALIGN_LEFT, "Are you sure you want to quit?");
-				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), Kepler.getWIDTH() / 2, Kepler.getHEIGHT() / 2, ALLEGRO_ALIGN_CENTRE, "Press Space to Exit the Game");
+				//if (Kepship.isWon(obShip))
+				//{
+				//	al_draw_text(Kepler.font18, al_map_rgb(255, 0, 0), (Kepler.getHEIGHT() / 2) + 30, (Kepler.getHEIGHT() / 2), ALLEGRO_ALIGN_CENTRE, "CONGRATULATIONS!");
+				//	al_draw_text(Kepler.font18, al_map_rgb(255, 0, 0), (Kepler.getHEIGHT() / 2) + 30, (Kepler.getHEIGHT() / 2) - 60, ALLEGRO_ALIGN_CENTRE, "You managed to save the human race.");
+				//	al_rest(5);
+				//}
+				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), Kepler.getWIDTH() / 2, Kepler.getHEIGHT() / 2, ALLEGRO_ALIGN_CENTRE, "Press Escape to Exit the Game");
 				al_draw_text(Kepler.font18, al_map_rgb(255, 255, 255), Kepler.getWIDTH() / 2, (Kepler.getHEIGHT() / 2) + 30, ALLEGRO_ALIGN_CENTRE, "Press ENTER to go to MENU");
 				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 255), 0, Kepler.getHEIGHT() - 100, ALLEGRO_ALIGN_LEFT, "Thank you for playing Kepler");
 				al_draw_text(Kepler.thanks, al_map_rgb(255, 150, 150), 0, Kepler.getHEIGHT() - 90, ALLEGRO_ALIGN_LEFT, "Created by:");

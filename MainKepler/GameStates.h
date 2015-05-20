@@ -44,7 +44,7 @@ public:
 	
 	enum KEYS{ UP, DOWN, LEFT, RIGHT, SPACE, ESCAPE, ENTER };
 
-	enum STATE{ MENU, PLAYING, GAMEOVER };
+	enum STATE{ MENU, PLAYING, GAMEOVER, TRANSITION };
 
 	bool done = false;
 	bool render = false;

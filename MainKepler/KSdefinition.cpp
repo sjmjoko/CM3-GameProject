@@ -274,6 +274,13 @@ void Keplership::resetKeplership(objectKPLR &ship)
 	ship.animationRow = 0;
 }
 
+bool Keplership::isWon(objectKPLR ship)
+{
+	if (ship.score >= 50)
+		return true;
+	else return false;
+}
+
 
 
 

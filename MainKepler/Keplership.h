@@ -36,6 +36,7 @@ public:
 	void rotateLeft(objectKPLR &);
 	void accKeplership(objectKPLR &);
 	void resetKeplership(objectKPLR &);
+	bool isWon(objectKPLR);
 
 	const int Bullets = 10;
 
